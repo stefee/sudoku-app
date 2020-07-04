@@ -1,11 +1,11 @@
 import Head from 'next/head'
 
-const SudokuCell = ({ id, label, digit = null }) => {
+const SudokuCell = ({ id, label, digit }) => {
   const cellId = `sudoku-cell-${id}`;
 
   return (
     <td>
-      <label for={cellId}>
+      <label htmlFor={cellId} className="visually-hidden">
         {label}
       </label>
       <input
@@ -29,6 +29,7 @@ const SudokuTableRow = ({ rowNumber }) => {
 
     cells.push(
       <SudokuCell
+        key={columnNumber}
         id={cellId}
         label={cellLabel}
       />
@@ -43,11 +44,11 @@ const SudokuTable = () => {
 
   for (const rowNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
     tableRows.push(
-      <SudokuTableRow rowNumber={rowNumber} />
+      <SudokuTableRow key={rowNumber} rowNumber={rowNumber} />
     )
   }
 
-  return <table>{tableRows}</table>;
+  return <table><tbody>{tableRows}</tbody></table>;
 };
 
 export default function Home() {
@@ -105,7 +106,8 @@ export default function Home() {
           border-bottom: 3px solid black;
         }
 
-        td label {
+        /* source: https://allyjs.io/tutorials/hiding-elements.html */
+        .visually-hidden {
           position: absolute;
 
           width: 1px;
