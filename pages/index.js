@@ -29,7 +29,7 @@ const useKeydown = (key, action) => {
   }, [])
 }
 
-const SudokuCell = ({ id, label, value }) => {
+const SudokuTableCell = ({ id, label, value }) => {
   const cellId = `sudoku-cell-${id}`
 
   return (
@@ -57,7 +57,7 @@ const SudokuTableRow = ({ rowNumber }) => {
     const cellLabel = cellId.toUpperCase()
 
     cells.push(
-      <SudokuCell
+      <SudokuTableCell
         key={columnNumber}
         id={cellId}
         label={cellLabel}
