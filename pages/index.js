@@ -94,6 +94,19 @@ export default function Home() {
           height: 100%;
 
           -moz-appearance: textfield;
+
+          caret-color: transparent;
+
+          cursor: default;
+        }
+
+        table input[type=number]:focus {
+          outline: none;
+          background-color: lightblue;
+        }
+
+        table input[type=number] ::selection {
+          background-color: transparent;
         }
 
         table input::-webkit-outer-spin-button,
@@ -108,6 +121,7 @@ export default function Home() {
           height: 1.6em;
           overflow: hidden;
           text-align: center;
+          padding: 0;
         }
 
         td:first-child {
