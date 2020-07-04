@@ -1,7 +1,7 @@
 import Head from 'next/head'
 
 const SudokuCell = ({ id, label, digit }) => {
-  const cellId = `sudoku-cell-${id}`;
+  const cellId = `sudoku-cell-${id}`
 
   return (
     <td>
@@ -17,15 +17,15 @@ const SudokuCell = ({ id, label, digit }) => {
         min={1}
       />
     </td>
-  );
-};
+  )
+}
 
 const SudokuTableRow = ({ rowNumber }) => {
-  const cells = [];
+  const cells = []
 
   for (const columnNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
-    const cellId = `r${rowNumber}c${columnNumber}`;
-    const cellLabel = cellId.toUpperCase();
+    const cellId = `r${rowNumber}c${columnNumber}`
+    const cellLabel = cellId.toUpperCase()
 
     cells.push(
       <SudokuCell
@@ -36,11 +36,11 @@ const SudokuTableRow = ({ rowNumber }) => {
     )
   }
 
-  return <tr>{cells}</tr>;
-};
+  return <tr>{cells}</tr>
+}
 
 const SudokuTable = () => {
-  const tableRows = [];
+  const tableRows = []
 
   for (const rowNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
     tableRows.push(
@@ -48,8 +48,8 @@ const SudokuTable = () => {
     )
   }
 
-  return <table><tbody>{tableRows}</tbody></table>;
-};
+  return <table><tbody>{tableRows}</tbody></table>
+}
 
 export default function Home() {
   return (
