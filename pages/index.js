@@ -1,4 +1,33 @@
+import { useEffect, useRef } from 'react'
 import Head from 'next/head'
+
+const useKeyup = (key, action) => {
+  useEffect(() => {
+    const onKeyup = event => {
+      if (event.key === key) action()
+    }
+
+    window.addEventListener('keyup', onKeyup)
+
+    return () => {
+      window.removeEventListener('keyup', onKeyup)
+    }
+  }, [])
+}
+
+const useKeydown = (key, action) => {
+  useEffect(() => {
+    const onKeydown = event => {
+      if (event.key === key) action()
+    }
+
+    window.addEventListener('keydown', onKeydown)
+
+    return () => {
+      window.removeEventListener('keydown', onKeydown)
+    }
+  }, [])
+}
 
 const SudokuCell = ({ id, label, value }) => {
   const cellId = `sudoku-cell-${id}`
@@ -40,6 +69,35 @@ const SudokuTableRow = ({ rowNumber }) => {
 }
 
 const SudokuTable = () => {
+  const tableRef = useRef();
+
+  useKeyup('ArrowRight', () => {
+    console.log('R')
+  })
+  useKeyup('ArrowLeft', () => {
+    console.log('L')
+  })
+  useKeyup('ArrowDown', () => {
+    console.log('D')
+  })
+  useKeyup('ArrowUp', () => {
+    console.log('U')
+  })
+  useKeydown('Backspace', () => {
+    console.log('<-')
+
+    if (tableRef.current.contains(document.activeElement)) {
+      document.activeElement.value = '';
+    }
+  })
+  useKeydown('Delete', () => {
+    console.log('X')
+
+    if (tableRef.current.contains(document.activeElement)) {
+      document.activeElement.value = '';
+    }
+  })
+
   const tableRows = []
 
   for (const rowNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
@@ -48,7 +106,7 @@ const SudokuTable = () => {
     )
   }
 
-  return <table><tbody>{tableRows}</tbody></table>
+  return <table ref={tableRef}><tbody>{tableRows}</tbody></table>
 }
 
 export default function Home() {
