@@ -69,31 +69,46 @@ const SudokuTableRow = ({ rowNumber }) => {
 }
 
 const SudokuTable = () => {
-  const tableRef = useRef();
+  const tableRef = useRef(null);
 
   useKeyup('ArrowRight', () => {
     console.log('R')
   })
+
   useKeyup('ArrowLeft', () => {
     console.log('L')
   })
+
   useKeyup('ArrowDown', () => {
     console.log('D')
   })
+
   useKeyup('ArrowUp', () => {
     console.log('U')
   })
+
   useKeydown('Backspace', () => {
     console.log('<-')
 
-    if (tableRef.current.contains(document.activeElement)) {
+    if (
+      tableRef.current &&
+      tableRef.current.contains &&
+      tableRef.current.contains(document.activeElement) &&
+      document.activeElement.value
+    ) {
       document.activeElement.value = '';
     }
   })
+
   useKeydown('Delete', () => {
     console.log('X')
 
-    if (tableRef.current.contains(document.activeElement)) {
+    if (
+      tableRef.current &&
+      tableRef.current.contains &&
+      tableRef.current.contains(document.activeElement) &&
+      document.activeElement.value
+    ) {
       document.activeElement.value = '';
     }
   })
