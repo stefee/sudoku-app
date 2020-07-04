@@ -109,8 +109,8 @@ export default function Home() {
           background-color: transparent;
         }
 
-        table input::-webkit-outer-spin-button,
-        table input::-webkit-inner-spin-button {
+        table input[type=number]::-webkit-outer-spin-button,
+        table input[type=number]::-webkit-inner-spin-button {
           -webkit-appearance: none;
           margin: 0;
         }
