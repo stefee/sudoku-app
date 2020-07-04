@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-const SudokuCell = ({ id, label, digit }) => {
+const SudokuCell = ({ id, label, value }) => {
   const cellId = `sudoku-cell-${id}`
 
   return (
@@ -12,7 +12,7 @@ const SudokuCell = ({ id, label, digit }) => {
         id={cellId}
         name={cellId}
         type="number"
-        value={digit}
+        value={value}
         max={9}
         min={1}
       />
@@ -80,6 +80,26 @@ export default function Home() {
           border-collapse: collapse;
           margin: 10px auto;
           font-size: 2rem;
+        }
+
+        table input[type=number] {
+          font-size: inherit;
+          border: none;
+          padding: 0;
+          margin: 0;
+          background: none;
+          text-align: center;
+
+          width: 100%;
+          height: 100%;
+
+          -moz-appearance: textfield;
+        }
+
+        table input::-webkit-outer-spin-button,
+        table input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
         }
 
         td {
