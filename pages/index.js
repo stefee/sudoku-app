@@ -49,7 +49,7 @@ const SudokuTableCell = ({ rowNumber, columnNumber }) => {
         name={inputId}
         type="text"
         inputMode="numeric"
-        pattern="[0-9]*"
+        pattern="[0-9]"
       />
     </td>
   )
