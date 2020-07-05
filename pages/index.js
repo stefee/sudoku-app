@@ -1,20 +1,6 @@
 import { useEffect, useRef } from 'react'
 import Head from 'next/head'
 
-const useKeyup = (key, action) => {
-  useEffect(() => {
-    const onKeyup = event => {
-      if (event.key === key) action()
-    }
-
-    window.addEventListener('keyup', onKeyup)
-
-    return () => {
-      window.removeEventListener('keyup', onKeyup)
-    }
-  }, [])
-}
-
 const useKeydown = (key, action) => {
   useEffect(() => {
     const onKeydown = event => {
@@ -89,7 +75,7 @@ const SudokuTableRow = ({ rowNumber }) => {
 const SudokuTable = () => {
   const tableRef = useRef(null)
 
-  useKeyup('ArrowRight', () => {
+  useKeydown('ArrowRight', () => {
     if (
       tableRef.current &&
       tableRef.current.contains &&
@@ -134,7 +120,7 @@ const SudokuTable = () => {
     }
   })
 
-  useKeyup('ArrowLeft', () => {
+  useKeydown('ArrowLeft', () => {
     if (
       tableRef.current &&
       tableRef.current.contains &&
@@ -179,7 +165,7 @@ const SudokuTable = () => {
     }
   })
 
-  useKeyup('ArrowDown', () => {
+  useKeydown('ArrowDown', () => {
     if (
       tableRef.current &&
       tableRef.current.contains &&
@@ -238,7 +224,7 @@ const SudokuTable = () => {
     }
   })
 
-  useKeyup('ArrowUp', () => {
+  useKeydown('ArrowUp', () => {
     if (
       tableRef.current &&
       tableRef.current.contains &&
