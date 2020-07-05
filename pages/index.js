@@ -4,18 +4,12 @@ import useKeydown from '../hooks/useKeydown'
 import useTableInputKeyboardControls from '../hooks/useTableInputKeyboardControls'
 
 const SudokuTableCell = ({ rowNumber, columnNumber }) => {
-  const sudokuCellId = `r${rowNumber}c${columnNumber}`
-  const sudokuCellReadableLabel = sudokuCellId.toUpperCase()
-  const inputId = `sudoku-cell-${sudokuCellId}`
+  const sudokuCellReadableLabel = `R${rowNumber}C${columnNumber}`
 
   return (
     <td data-sudoku-cell-row-number={rowNumber} data-sudoku-cell-column-number={columnNumber}>
-      <label htmlFor={inputId} className="visually-hidden">
-        {sudokuCellReadableLabel}
-      </label>
       <input
-        id={inputId}
-        name={inputId}
+        aria-label={sudokuCellReadableLabel}
         type="text"
         inputMode="numeric"
         pattern="[0-9]"
@@ -148,20 +142,6 @@ const Home = () => {
 
         tr:nth-child(3n) {
           border-bottom: 3px solid black;
-        }
-
-        /* source: https://allyjs.io/tutorials/hiding-elements.html */
-        .visually-hidden {
-          position: absolute;
-
-          width: 1px;
-          height: 1px;
-          margin: -1px;
-          border: 0;
-          padding: 0;
-
-          clip: rect(0 0 0 0);
-          overflow: hidden;
         }
       `}</style>
     </div>
