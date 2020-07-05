@@ -33,19 +33,40 @@ const focusRelativeCell = ({
   const tableCellElement = findParentByTagName(currentCellElement, 'TD')
   const tableBodyElement = findParentByTagName(currentCellElement, 'TBODY')
 
+  if (!tableCellElement) {
+    console.error('Could not find table cell element')
+    return
+  }
+
+  if (!tableBodyElement) {
+    console.error('Could not find table body element')
+    return
+  }
+
   const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
   const cellRowNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-row-number'), 10)
+
+  if (typeof cellColumnNumber !== 'number') {
+    console.error('Could not find current cell column number')
+    return
+  }
+
+  if (typeof cellRowNumber !== 'number') {
+    console.error('Could not find current cell row number')
+    return
+  }
 
   const nextCellRowNumber = getNextCellRowNumber ? getNextCellRowNumber(cellRowNumber) : cellRowNumber
   const nextCellColumnNumber = getNextCellColumnNumber ? getNextCellColumnNumber(cellColumnNumber) : cellColumnNumber
 
   const nextCell = tableBodyElement.querySelector(`td[data-sudoku-cell-column-number="${nextCellColumnNumber}"][data-sudoku-cell-row-number="${nextCellRowNumber}"] input`)
 
-  if (nextCell) {
-    nextCell.focus()
-  } else {
-    console.error('Couldn\'t find next cell', `cellColumnNumber: ${cellColumnNumber}`, `nextCellRowNumber: ${nextCellRowNumber}`)
+  if (!nextCell) {
+    console.error('Could not find next cell')
+    return
   }
+
+  nextCell.focus()
 }
 
 const SudokuTableCell = ({ rowNumber, columnNumber }) => {
@@ -186,7 +207,7 @@ const SudokuTable = () => {
   return <table ref={tableRef}><tbody>{tableRows}</tbody></table>
 }
 
-export default function Home() {
+const Home = () => {
   return (
     <div className="container">
       <Head>
@@ -293,3 +314,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default Home
