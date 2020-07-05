@@ -29,17 +29,38 @@ const useKeydown = (key, action) => {
   }, [])
 }
 
-const SudokuTableCell = ({ id, label, value }) => {
-  const cellId = `sudoku-cell-${id}`
+const SudokuTableCell = ({ rowNumber, columnNumber, value }) => {
+  const sudokuCellId = `r${rowNumber}c${columnNumber}`
+  const sudokuCellReadableLabel = sudokuCellId.toUpperCase()
+  const inputId = `sudoku-cell-${sudokuCellId}`
+
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (inputRef.current) {
+      const onKeydown = event => {
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+          event.preventDefault()
+        }
+      }
+
+      inputRef.current.addEventListener('keydown', onKeydown)
+
+      return () => {
+        window.removeEventListener('onkeydown', onKeydown)
+      }
+    }
+  }, [])
 
   return (
-    <td>
-      <label htmlFor={cellId} className="visually-hidden">
-        {label}
+    <td data-sudoku-cell-row-number={rowNumber} data-sudoku-cell-column-number={columnNumber}>
+      <label htmlFor={inputId} className="visually-hidden">
+        {sudokuCellReadableLabel}
       </label>
       <input
-        id={cellId}
-        name={cellId}
+        ref={inputRef}
+        id={inputId}
+        name={inputId}
         type="number"
         value={value}
         max={9}
@@ -53,63 +74,238 @@ const SudokuTableRow = ({ rowNumber }) => {
   const cells = []
 
   for (const columnNumber of [1, 2, 3, 4, 5, 6, 7, 8, 9]) {
-    const cellId = `r${rowNumber}c${columnNumber}`
-    const cellLabel = cellId.toUpperCase()
-
     cells.push(
       <SudokuTableCell
         key={columnNumber}
-        id={cellId}
-        label={cellLabel}
+        rowNumber={rowNumber}
+        columnNumber={columnNumber}
       />
     )
   }
 
-  return <tr>{cells}</tr>
+  return <tr data-sudoku-row-number={rowNumber}>{cells}</tr>
 }
 
 const SudokuTable = () => {
-  const tableRef = useRef(null);
+  const tableRef = useRef(null)
 
   useKeyup('ArrowRight', () => {
-    console.log('R')
-  })
-
-  useKeyup('ArrowLeft', () => {
-    console.log('L')
-  })
-
-  useKeyup('ArrowDown', () => {
-    console.log('D')
-  })
-
-  useKeyup('ArrowUp', () => {
-    console.log('U')
-  })
-
-  useKeydown('Backspace', () => {
-    console.log('<-')
-
     if (
       tableRef.current &&
       tableRef.current.contains &&
       tableRef.current.contains(document.activeElement) &&
-      document.activeElement.value
+      document.activeElement.tagName === 'INPUT'
     ) {
-      document.activeElement.value = '';
+      let tableCellElement
+      let tableRowElement
+
+      {
+        // find parent table cell by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableCellElement) {
+          el = el.parentElement
+          if (el.tagName === 'TD') {
+            tableCellElement = el
+          }
+        }
+      }
+
+      {
+        // find parent table row by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableRowElement) {
+          el = el.parentElement
+          if (el.tagName === 'TR') {
+            tableRowElement = el
+          }
+        }
+      }
+
+      const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
+      const nextCellColumnNumber = (cellColumnNumber % 9) + 1
+
+      const nextCell = tableRowElement.querySelector(`td[data-sudoku-cell-column-number="${nextCellColumnNumber}"] input`)
+
+      if (nextCell) {
+        nextCell.focus()
+      } else {
+        console.error('Couldn\'t find next cell', `nextCellColumnNumber: ${nextCellColumnNumber}`)
+      }
     }
   })
 
-  useKeydown('Delete', () => {
-    console.log('X')
-
+  useKeyup('ArrowLeft', () => {
     if (
       tableRef.current &&
       tableRef.current.contains &&
       tableRef.current.contains(document.activeElement) &&
+      document.activeElement.tagName === 'INPUT'
+    ) {
+      let tableCellElement
+      let tableRowElement
+
+      {
+        // find parent table cell by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableCellElement) {
+          el = el.parentElement
+          if (el.tagName === 'TD') {
+            tableCellElement = el
+          }
+        }
+      }
+
+      {
+        // find parent table row by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableRowElement) {
+          el = el.parentElement
+          if (el.tagName === 'TR') {
+            tableRowElement = el
+          }
+        }
+      }
+
+      const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
+      const nextCellColumnNumber = 9 - ((10 - cellColumnNumber) % 9)
+
+      const nextCell = tableRowElement.querySelector(`td[data-sudoku-cell-column-number="${nextCellColumnNumber}"] input`)
+
+      if (nextCell) {
+        nextCell.focus()
+      } else {
+        console.error('Couldn\'t find next cell', `nextCellColumnNumber: ${nextCellColumnNumber}`)
+      }
+    }
+  })
+
+  useKeyup('ArrowDown', () => {
+    if (
+      tableRef.current &&
+      tableRef.current.contains &&
+      tableRef.current.contains(document.activeElement) &&
+      document.activeElement.tagName === 'INPUT'
+    ) {
+      let tableCellElement
+      let tableRowElement
+      let tableBodyElement
+
+      {
+        // find parent table cell by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableCellElement) {
+          el = el.parentElement
+          if (el.tagName === 'TD') {
+            tableCellElement = el
+          }
+        }
+      }
+
+      {
+        // find parent table row by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableRowElement) {
+          el = el.parentElement
+          if (el.tagName === 'TR') {
+            tableRowElement = el
+          }
+        }
+      }
+
+      {
+        // find parent table body by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableBodyElement) {
+          el = el.parentElement
+          if (el.tagName === 'TBODY') {
+            tableBodyElement = el
+          }
+        }
+      }
+
+      const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
+      const cellRowNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-row-number'), 10)
+
+      const nextCellRowNumber = (cellRowNumber % 9) + 1
+
+      const nextCell = tableBodyElement.querySelector(`td[data-sudoku-cell-column-number="${cellColumnNumber}"][data-sudoku-cell-row-number="${nextCellRowNumber}"] input`)
+
+      if (nextCell) {
+        nextCell.focus()
+      } else {
+        console.error('Couldn\'t find next cell', `cellColumnNumber: ${cellColumnNumber}`, `nextCellRowNumber: ${nextCellRowNumber}`)
+      }
+    }
+  })
+
+  useKeyup('ArrowUp', () => {
+    if (
+      tableRef.current &&
+      tableRef.current.contains &&
+      tableRef.current.contains(document.activeElement) &&
+      document.activeElement.tagName === 'INPUT'
+    ) {
+      let tableCellElement
+      let tableRowElement
+      let tableBodyElement
+
+      {
+        // find parent table cell by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableCellElement) {
+          el = el.parentElement
+          if (el.tagName === 'TD') {
+            tableCellElement = el
+          }
+        }
+      }
+
+      {
+        // find parent table row by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableRowElement) {
+          el = el.parentElement
+          if (el.tagName === 'TR') {
+            tableRowElement = el
+          }
+        }
+      }
+
+      {
+        // find parent table body by tag name
+        let el = document.activeElement
+        while (el.parentElement && !tableBodyElement) {
+          el = el.parentElement
+          if (el.tagName === 'TBODY') {
+            tableBodyElement = el
+          }
+        }
+      }
+
+      const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
+      const cellRowNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-row-number'), 10)
+
+      const nextCellRowNumber = 9 - ((10 - cellRowNumber) % 9)
+
+      const nextCell = tableBodyElement.querySelector(`td[data-sudoku-cell-column-number="${cellColumnNumber}"][data-sudoku-cell-row-number="${nextCellRowNumber}"] input`)
+
+      if (nextCell) {
+        nextCell.focus()
+      } else {
+        console.error('Couldn\'t find next cell', `cellColumnNumber: ${cellColumnNumber}`, `nextCellRowNumber: ${nextCellRowNumber}`)
+      }
+    }
+  })
+
+  useKeydown('Backspace', () => {
+    if (
+      tableRef.current &&
+      tableRef.current.contains &&
+      tableRef.current.contains(document.activeElement) &&
+      document.activeElement.tagName === 'INPUT' &&
       document.activeElement.value
     ) {
-      document.activeElement.value = '';
+      document.activeElement.value = ''
     }
   })
 
