@@ -74,31 +74,12 @@ const SudokuTableCell = ({ rowNumber, columnNumber }) => {
   const sudokuCellReadableLabel = sudokuCellId.toUpperCase()
   const inputId = `sudoku-cell-${sudokuCellId}`
 
-  const inputRef = useRef(null)
-
-  useEffect(() => {
-    if (inputRef.current) {
-      const onKeydown = event => {
-        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-          event.preventDefault()
-        }
-      }
-
-      inputRef.current.addEventListener('keydown', onKeydown)
-
-      return () => {
-        inputRef.current.removeEventListener('onkeydown', onKeydown)
-      }
-    }
-  }, [])
-
   return (
     <td data-sudoku-cell-row-number={rowNumber} data-sudoku-cell-column-number={columnNumber}>
       <label htmlFor={inputId} className="visually-hidden">
         {sudokuCellReadableLabel}
       </label>
       <input
-        ref={inputRef}
         id={inputId}
         name={inputId}
         type="text"
@@ -250,8 +231,6 @@ const Home = () => {
           width: 100%;
           height: 100%;
 
-          -moz-appearance: textfield;
-
           caret-color: transparent;
 
           cursor: default;
@@ -264,12 +243,6 @@ const Home = () => {
 
         table input[inputmode="numeric"] ::selection {
           background-color: transparent;
-        }
-
-        table input[inputmode="numeric"]::-webkit-outer-spin-button,
-        table input[inputmode="numeric"]::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
         }
 
         td {
