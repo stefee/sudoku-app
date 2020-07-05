@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "public": true,
+  "regions": ["lhr1"],
+  "routes": [
+    { "src": "/static/(.*)", "dest": "/static/$1" },
+    { "src": "/favicon.ico", "dest": "/static/favicon.ico" },
+    { "src": "/robots.txt", "dest": "/static/robots.txt" },
+    { "src": "/asset-manifest.json", "dest": "/static/asset-manifest.json" },
+    { "src": "/manifest.json", "dest": "/static/manifest.json" },
+    { "src": "/precache-manifest.(.*)", "dest": "/static/precache-manifest.$1" }
+  ],
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@now/next"
+    }
+  ]
+}
