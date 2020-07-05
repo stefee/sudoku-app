@@ -15,6 +15,39 @@ const useKeydown = (key, action) => {
   }, [])
 }
 
+const findParentByTagName = (element, tagName) => {
+  let el = element
+  while (el.parentElement) {
+    el = el.parentElement
+    if (el.tagName === tagName) {
+      return el
+    }
+  }
+}
+
+const focusRelativeCell = ({
+  currentCellElement,
+  getNextCellRowNumber,
+  getNextCellColumnNumber,
+}) => {
+  const tableCellElement = findParentByTagName(currentCellElement, 'TD')
+  const tableBodyElement = findParentByTagName(currentCellElement, 'TBODY')
+
+  const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
+  const cellRowNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-row-number'), 10)
+
+  const nextCellRowNumber = getNextCellRowNumber ? getNextCellRowNumber(cellRowNumber) : cellRowNumber
+  const nextCellColumnNumber = getNextCellColumnNumber ? getNextCellColumnNumber(cellColumnNumber) : cellColumnNumber
+
+  const nextCell = tableBodyElement.querySelector(`td[data-sudoku-cell-column-number="${nextCellColumnNumber}"][data-sudoku-cell-row-number="${nextCellRowNumber}"] input`)
+
+  if (nextCell) {
+    nextCell.focus()
+  } else {
+    console.error('Couldn\'t find next cell', `cellColumnNumber: ${cellColumnNumber}`, `nextCellRowNumber: ${nextCellRowNumber}`)
+  }
+}
+
 const SudokuTableCell = ({ rowNumber, columnNumber }) => {
   const sudokuCellId = `r${rowNumber}c${columnNumber}`
   const sudokuCellReadableLabel = sudokuCellId.toUpperCase()
@@ -33,7 +66,7 @@ const SudokuTableCell = ({ rowNumber, columnNumber }) => {
       inputRef.current.addEventListener('keydown', onKeydown)
 
       return () => {
-        window.removeEventListener('onkeydown', onKeydown)
+        inputRef.current.removeEventListener('onkeydown', onKeydown)
       }
     }
   }, [])
@@ -81,41 +114,10 @@ const SudokuTable = () => {
       tableRef.current.contains(document.activeElement) &&
       document.activeElement.tagName === 'INPUT'
     ) {
-      let tableCellElement
-      let tableRowElement
-
-      {
-        // find parent table cell by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableCellElement) {
-          el = el.parentElement
-          if (el.tagName === 'TD') {
-            tableCellElement = el
-          }
-        }
-      }
-
-      {
-        // find parent table row by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableRowElement) {
-          el = el.parentElement
-          if (el.tagName === 'TR') {
-            tableRowElement = el
-          }
-        }
-      }
-
-      const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
-      const nextCellColumnNumber = (cellColumnNumber % 9) + 1
-
-      const nextCell = tableRowElement.querySelector(`td[data-sudoku-cell-column-number="${nextCellColumnNumber}"] input`)
-
-      if (nextCell) {
-        nextCell.focus()
-      } else {
-        console.error('Couldn\'t find next cell', `nextCellColumnNumber: ${nextCellColumnNumber}`)
-      }
+      focusRelativeCell({
+        currentCellElement: document.activeElement,
+        getNextCellColumnNumber: currentCellColumnNumber => (currentCellColumnNumber % 9) + 1,
+      })
     }
   })
 
@@ -126,41 +128,10 @@ const SudokuTable = () => {
       tableRef.current.contains(document.activeElement) &&
       document.activeElement.tagName === 'INPUT'
     ) {
-      let tableCellElement
-      let tableRowElement
-
-      {
-        // find parent table cell by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableCellElement) {
-          el = el.parentElement
-          if (el.tagName === 'TD') {
-            tableCellElement = el
-          }
-        }
-      }
-
-      {
-        // find parent table row by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableRowElement) {
-          el = el.parentElement
-          if (el.tagName === 'TR') {
-            tableRowElement = el
-          }
-        }
-      }
-
-      const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
-      const nextCellColumnNumber = 9 - ((10 - cellColumnNumber) % 9)
-
-      const nextCell = tableRowElement.querySelector(`td[data-sudoku-cell-column-number="${nextCellColumnNumber}"] input`)
-
-      if (nextCell) {
-        nextCell.focus()
-      } else {
-        console.error('Couldn\'t find next cell', `nextCellColumnNumber: ${nextCellColumnNumber}`)
-      }
+      focusRelativeCell({
+        currentCellElement: document.activeElement,
+        getNextCellColumnNumber: currentCellColumnNumber => 9 - ((10 - currentCellColumnNumber) % 9),
+      })
     }
   })
 
@@ -171,55 +142,10 @@ const SudokuTable = () => {
       tableRef.current.contains(document.activeElement) &&
       document.activeElement.tagName === 'INPUT'
     ) {
-      let tableCellElement
-      let tableRowElement
-      let tableBodyElement
-
-      {
-        // find parent table cell by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableCellElement) {
-          el = el.parentElement
-          if (el.tagName === 'TD') {
-            tableCellElement = el
-          }
-        }
-      }
-
-      {
-        // find parent table row by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableRowElement) {
-          el = el.parentElement
-          if (el.tagName === 'TR') {
-            tableRowElement = el
-          }
-        }
-      }
-
-      {
-        // find parent table body by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableBodyElement) {
-          el = el.parentElement
-          if (el.tagName === 'TBODY') {
-            tableBodyElement = el
-          }
-        }
-      }
-
-      const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
-      const cellRowNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-row-number'), 10)
-
-      const nextCellRowNumber = (cellRowNumber % 9) + 1
-
-      const nextCell = tableBodyElement.querySelector(`td[data-sudoku-cell-column-number="${cellColumnNumber}"][data-sudoku-cell-row-number="${nextCellRowNumber}"] input`)
-
-      if (nextCell) {
-        nextCell.focus()
-      } else {
-        console.error('Couldn\'t find next cell', `cellColumnNumber: ${cellColumnNumber}`, `nextCellRowNumber: ${nextCellRowNumber}`)
-      }
+      focusRelativeCell({
+        currentCellElement: document.activeElement,
+        getNextCellRowNumber: currentCellRowNumber => (currentCellRowNumber % 9) + 1,
+      })
     }
   })
 
@@ -230,55 +156,10 @@ const SudokuTable = () => {
       tableRef.current.contains(document.activeElement) &&
       document.activeElement.tagName === 'INPUT'
     ) {
-      let tableCellElement
-      let tableRowElement
-      let tableBodyElement
-
-      {
-        // find parent table cell by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableCellElement) {
-          el = el.parentElement
-          if (el.tagName === 'TD') {
-            tableCellElement = el
-          }
-        }
-      }
-
-      {
-        // find parent table row by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableRowElement) {
-          el = el.parentElement
-          if (el.tagName === 'TR') {
-            tableRowElement = el
-          }
-        }
-      }
-
-      {
-        // find parent table body by tag name
-        let el = document.activeElement
-        while (el.parentElement && !tableBodyElement) {
-          el = el.parentElement
-          if (el.tagName === 'TBODY') {
-            tableBodyElement = el
-          }
-        }
-      }
-
-      const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
-      const cellRowNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-row-number'), 10)
-
-      const nextCellRowNumber = 9 - ((10 - cellRowNumber) % 9)
-
-      const nextCell = tableBodyElement.querySelector(`td[data-sudoku-cell-column-number="${cellColumnNumber}"][data-sudoku-cell-row-number="${nextCellRowNumber}"] input`)
-
-      if (nextCell) {
-        nextCell.focus()
-      } else {
-        console.error('Couldn\'t find next cell', `cellColumnNumber: ${cellColumnNumber}`, `nextCellRowNumber: ${nextCellRowNumber}`)
-      }
+      focusRelativeCell({
+        currentCellElement: document.activeElement,
+        getNextCellRowNumber: currentCellRowNumber => 9 - ((10 - currentCellRowNumber) % 9),
+      })
     }
   })
 
