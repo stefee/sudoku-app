@@ -13,8 +13,8 @@ const findParentByTagName = (element, tagName) => {
 
 const getNextCell = ({
   currentInputElement,
-  getNextCellRowNumber,
-  getNextCellColumnNumber,
+  getNextCellRowNumber = null,
+  getNextCellColumnNumber = null,
 }) => {
   const tableCellElement = findParentByTagName(currentInputElement, 'TD')
   const tableBodyElement = findParentByTagName(currentInputElement, 'TBODY')
