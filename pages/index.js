@@ -15,7 +15,7 @@ const useKeydown = (key, action) => {
   }, [])
 }
 
-const SudokuTableCell = ({ rowNumber, columnNumber, value }) => {
+const SudokuTableCell = ({ rowNumber, columnNumber }) => {
   const sudokuCellId = `r${rowNumber}c${columnNumber}`
   const sudokuCellReadableLabel = sudokuCellId.toUpperCase()
   const inputId = `sudoku-cell-${sudokuCellId}`
@@ -47,10 +47,9 @@ const SudokuTableCell = ({ rowNumber, columnNumber, value }) => {
         ref={inputRef}
         id={inputId}
         name={inputId}
-        type="number"
-        value={value}
-        max={9}
-        min={1}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
       />
     </td>
   )
@@ -337,9 +336,10 @@ export default function Home() {
           font-size: 2rem;
         }
 
-        table input[type=number] {
+        table input[inputmode="numeric"] {
           font-size: inherit;
           border: none;
+          border-radius: 0;
           padding: 0;
           margin: 0;
           background: none;
@@ -355,17 +355,17 @@ export default function Home() {
           cursor: default;
         }
 
-        table input[type=number]:focus {
+        table input[inputmode="numeric"]:focus {
           outline: none;
           background-color: lightblue;
         }
 
-        table input[type=number] ::selection {
+        table input[inputmode="numeric"] ::selection {
           background-color: transparent;
         }
 
-        table input[type=number]::-webkit-outer-spin-button,
-        table input[type=number]::-webkit-inner-spin-button {
+        table input[inputmode="numeric"]::-webkit-outer-spin-button,
+        table input[inputmode="numeric"]::-webkit-inner-spin-button {
           -webkit-appearance: none;
           margin: 0;
         }
