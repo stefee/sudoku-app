@@ -32,12 +32,12 @@ const getNextCell = ({
   const cellColumnNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-column-number'), 10)
   const cellRowNumber = parseInt(tableCellElement.getAttribute('data-sudoku-cell-row-number'), 10)
 
-  if (typeof cellColumnNumber !== 'number') {
+  if (typeof cellColumnNumber !== 'number' || isNaN(cellColumnNumber)) {
     console.error('Could not find current column number')
     return null
   }
 
-  if (typeof cellRowNumber !== 'number') {
+  if (typeof cellRowNumber !== 'number' || isNaN(cellRowNumber)) {
     console.error('Could not find current row number')
     return null
   }
