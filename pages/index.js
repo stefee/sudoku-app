@@ -1,18 +1,71 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import Head from 'next/head'
 import useKeydown from '../hooks/useKeydown'
 import useTableInputKeyboardControls from '../hooks/useTableInputKeyboardControls'
 
+const sudokuCellInputPattern = '[0-9]'
+const sudokuCellInputPatternRegExp = new RegExp(`^${sudokuCellInputPattern}$`)
+
 const SudokuTableCell = ({ rowNumber, columnNumber }) => {
   const sudokuCellReadableLabel = `R${rowNumber}C${columnNumber}`
+
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    const onTableCellInputKeydown = event => {
+      if (!event.metaKey) {
+        event.preventDefault()
+      }
+
+      if (sudokuCellInputPatternRegExp.test(event.key)) {
+        if (!event.target.disabled) {
+          event.target.value = event.key
+        }
+      }
+    }
+
+    const onTableCellInputPaste = event => {
+      if (!event.metaKey) {
+        event.preventDefault()
+      }
+
+      const clipboardText = event.clipboardData.getData('text')
+
+      if (sudokuCellInputPatternRegExp.test(clipboardText)) {
+        if (!event.target.disabled) {
+          event.target.value = clipboardText
+        }
+      }
+    }
+
+    if (
+      inputRef.current &&
+      inputRef.current.addEventListener
+    ) {
+      inputRef.current.addEventListener('keydown', onTableCellInputKeydown)
+      inputRef.current.addEventListener('paste', onTableCellInputPaste)
+    }
+
+    return () => {
+      if (
+        inputRef.current &&
+        inputRef.current.removeEventListener
+      ) {
+        inputRef.current.removeEventListener('keydown', onTableCellInputKeydown)
+        inputRef.current.removeEventListener('paste', onTableCellInputPaste)
+      }
+    }
+  }, [])
 
   return (
     <td data-sudoku-cell-row-number={rowNumber} data-sudoku-cell-column-number={columnNumber}>
       <input
+        ref={inputRef}
         aria-label={sudokuCellReadableLabel}
         type="text"
         inputMode="numeric"
-        pattern="[0-9]"
+        pattern={sudokuCellInputPattern}
+        autoComplete="off"
       />
     </td>
   )
